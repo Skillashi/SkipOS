@@ -1,4 +1,4 @@
-# Finance OS - MISSION CONTROL & AI CO-PILOT
+# SkipOS - MISSION CONTROL & AI CO-PILOT
 
 ## Overview
 A comprehensive React + TypeScript application featuring two integrated screens for financial intelligence and management.
@@ -6,7 +6,7 @@ A comprehensive React + TypeScript application featuring two integrated screens 
 ### Screens Implemented
 
 #### 1. MISSION CONTROL (Home Entry Point)
-The HOME entry point of Finance OS featuring:
+The HOME entry point of SkipOS featuring:
 
 **Motion System**
 - KPI cards animate in staggered sequence (80-120ms between cards)
