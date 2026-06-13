@@ -156,12 +156,6 @@ function ResultsDisplay({ onClose, onBackHome }: { onClose: () => void; onBackHo
             transition={{ duration: 0.5 }}
           >
             <button
-              onClick={onBackHome}
-              className="w-full py-3 px-4 rounded-[8px] font-['General_Sans'] font-medium text-[11px] sm:text-[14px] transition-colors bg-[#243010] text-white hover:bg-[#7a9228]"
-            >
-              Explore Wealth Plans
-            </button>
-            <button
               onClick={onClose}
               className="w-full py-3 px-4 rounded-[8px] font-['General_Sans'] font-medium text-[11px] sm:text-[14px] transition-colors bg-white text-[#1b1b1b] border border-[rgba(0,0,0,0.1)] hover:bg-[#f5f5f5]"
             >
