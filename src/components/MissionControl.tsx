@@ -27,15 +27,17 @@ function AnimatedCounter({ from = 0, to, duration = 2 }: { from?: number; to: nu
   useEffect(() => {
     const start = Date.now();
     const timer = setInterval(() => {
-      const progress = Math.min((Date.now() - start) / (duration * 1000), 1);
+      const elapsed = Date.now() - start;
+      const rawProgress = Math.min(elapsed / (duration * 1000), 1);
+      // Ease out expo — starts fast, decelerates dramatically at end
+      const progress = rawProgress === 1 ? 1 : 1 - Math.pow(2, -10 * rawProgress);
       setCount(Math.floor(from + (to - from) * progress));
-      if (progress === 1) clearInterval(timer);
+      if (rawProgress === 1) clearInterval(timer);
     }, 16);
     return () => clearInterval(timer);
   }, [from, to, duration]);
   return <>{count}</>;
 }
-
 // KPI Card
 function KPICard({
   bgColor,
@@ -65,9 +67,14 @@ function KPICard({
         </p>
         {showIcon && <Icon src={imgVuesaxLinearTrendUp} size={13} />}
       </div>
-      <p className="font-['General_Sans'] font-semibold text-[#87a330] text-xl sm:text-2xl leading-tight break-words w-full">
-        {value}
-      </p>
+      <motion.p
+        className="font-['General_Sans'] font-semibold text-[#87a330] text-xl sm:text-2xl leading-tight break-words w-full"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.4, delay: delay + 0.2, type: 'spring', stiffness: 200 }}
+      >
+        {typeof value === 'number' ? <AnimatedCounter to={value} duration={2.5} /> : value}
+      </motion.p>
       <p className="font-['General_Sans'] text-[#87a330] text-[11px] sm:text-[13px] leading-normal break-words w-full">
         {subtitle}
       </p>
@@ -202,9 +209,14 @@ export default function MissionControl({
                 </p>
                 <Icon src={imgVuesaxLinearTrendUp} size={13} />
               </div>
-              <p className="font-['General_Sans'] font-semibold text-[#87a330] text-xl sm:text-2xl leading-tight">
-                114 DAYS
-              </p>
+              <motion.p
+                className="font-['General_Sans'] font-semibold text-[#87a330] text-xl sm:text-2xl leading-tight"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.4, type: 'spring', stiffness: 200 }}
+              >
+                <AnimatedCounter to={114} duration={2.5} /> DAYS
+              </motion.p>
               <p className="font-['General_Sans'] text-[#87a330] text-[11px] sm:text-[13px] leading-normal break-words">
                 Time you can survive without income
               </p>
@@ -223,9 +235,14 @@ export default function MissionControl({
                 </p>
                 <Icon src={imgVuesaxLinearTrendUp1} size={13} />
               </div>
-              <p className="font-['General_Sans'] font-semibold text-[#a6d49f] text-xl sm:text-2xl leading-tight">
-                ₦128,000
-              </p>
+              <motion.p
+                className="font-['General_Sans'] font-semibold text-[#a6d49f] text-xl sm:text-2xl leading-tight"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.5, type: 'spring', stiffness: 200 }}
+              >
+                ₦<AnimatedCounter to={128000} duration={2.5} />
+              </motion.p>
               <div className="flex gap-1.5 items-center">
                 <Icon src={imgVuesaxLinearArrowUp} size={12} />
                 <p className="font-['General_Sans'] text-[#a6d49f] text-[11px] sm:text-[13px] leading-normal">
