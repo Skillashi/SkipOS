@@ -21,22 +21,46 @@ function Icon({ src, size = 14 }: { src: string; size?: number }) {
   );
 }
 
-// Animated Counter
-function AnimatedCounter({ from = 0, to, duration = 2 }: { from?: number; to: number; duration?: number }) {
-  const [count, setCount] = useState(from);
+// Scrambled Text
+function ScrambleText({ value, duration = 1.8, delay = 0 }: { value: string; duration?: number; delay?: number }) {
+  const [display, setDisplay] = useState('');
+  const chars = '0123456789₦';
+
   useEffect(() => {
-    const start = Date.now();
-    const timer = setInterval(() => {
-      const elapsed = Date.now() - start;
-      const rawProgress = Math.min(elapsed / (duration * 1000), 1);
-      // Ease out expo — starts fast, decelerates dramatically at end
-      const progress = rawProgress === 1 ? 1 : 1 - Math.pow(2, -10 * rawProgress);
-      setCount(Math.floor(from + (to - from) * progress));
-      if (rawProgress === 1) clearInterval(timer);
-    }, 16);
-    return () => clearInterval(timer);
-  }, [from, to, duration]);
-  return <>{count}</>;
+    let startTime: number | null = null;
+    let frame: number;
+
+    const scramble = (timestamp: number) => {
+      if (!startTime) startTime = timestamp + delay * 1000;
+      const elapsed = Math.max(0, timestamp - startTime);
+      const progress = Math.min(elapsed / (duration * 1000), 1);
+
+      // How many characters are "locked" from left to right
+      const lockedCount = Math.floor(progress * value.length);
+
+      const scrambled = value
+        .split('')
+        .map((char, i) => {
+          if (i < lockedCount) return char; // locked in
+          if (char === ' ' || char === ',' || char === '/') return char; // keep symbols
+          return chars[Math.floor(Math.random() * chars.length)];
+        })
+        .join('');
+
+      setDisplay(scrambled);
+
+      if (progress < 1) {
+        frame = requestAnimationFrame(scramble);
+      } else {
+        setDisplay(value); // snap to final value
+      }
+    };
+
+    frame = requestAnimationFrame(scramble);
+    return () => cancelAnimationFrame(frame);
+  }, [value, duration, delay]);
+
+  return <>{display}</>;
 }
 // KPI Card
 function KPICard({
@@ -67,14 +91,9 @@ function KPICard({
         </p>
         {showIcon && <Icon src={imgVuesaxLinearTrendUp} size={13} />}
       </div>
-      <motion.p
-        className="font-['General_Sans'] font-semibold text-[#87a330] text-xl sm:text-2xl leading-tight break-words w-full"
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.4, delay: delay + 0.2, type: 'spring', stiffness: 200 }}
-      >
-        {typeof value === 'number' ? <AnimatedCounter to={value} duration={2.5} /> : value}
-      </motion.p>
+      <p className="font-['General_Sans'] font-semibold text-[#87a330] text-xl sm:text-2xl leading-tight break-words w-full">
+        <ScrambleText value={String(value)} duration={1.8} delay={delay} />
+      </p>
       <p className="font-['General_Sans'] text-[#87a330] text-[11px] sm:text-[13px] leading-normal break-words w-full">
         {subtitle}
       </p>
@@ -209,14 +228,9 @@ export default function MissionControl({
                 </p>
                 <Icon src={imgVuesaxLinearTrendUp} size={13} />
               </div>
-              <motion.p
-                className="font-['General_Sans'] font-semibold text-[#87a330] text-xl sm:text-2xl leading-tight"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.4, type: 'spring', stiffness: 200 }}
-              >
-                <AnimatedCounter to={114} duration={2.5} /> DAYS
-              </motion.p>
+              <p className="font-['General_Sans'] font-semibold text-[#87a330] text-xl sm:text-2xl leading-tight">
+                <ScrambleText value="114 DAYS" duration={1.8} delay={0.2} />
+              </p>
               <p className="font-['General_Sans'] text-[#87a330] text-[11px] sm:text-[13px] leading-normal break-words">
                 Time you can survive without income
               </p>
@@ -235,14 +249,9 @@ export default function MissionControl({
                 </p>
                 <Icon src={imgVuesaxLinearTrendUp1} size={13} />
               </div>
-              <motion.p
-                className="font-['General_Sans'] font-semibold text-[#a6d49f] text-xl sm:text-2xl leading-tight"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.5, type: 'spring', stiffness: 200 }}
-              >
-                ₦<AnimatedCounter to={128000} duration={2.5} />
-              </motion.p>
+              <p className="font-['General_Sans'] font-semibold text-[#a6d49f] text-xl sm:text-2xl leading-tight">
+                <ScrambleText value="₦128,000" duration={1.8} delay={0.3} />
+              </p>
               <div className="flex gap-1.5 items-center">
                 <Icon src={imgVuesaxLinearArrowUp} size={12} />
                 <p className="font-['General_Sans'] text-[#a6d49f] text-[11px] sm:text-[13px] leading-normal">
